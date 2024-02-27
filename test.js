@@ -1,14 +1,39 @@
 let menButton = document.getElementById("men");
 let womenButton = document.getElementById("women");
 let kidsButton = document.getElementById("kids");
-
 let productsListElement = document.getElementById("productsList");
-let tab = "Men";
+let productsListElement2 = document.getElementById("productsList2");
+let count = document.getElementById("count");
+let cart = document.getElementById("cart");
+let main = document.getElementById("main");
+let con = document.getElementById("con");
+let homeBtn = document.getElementById("homeBtn");
+let cartProducts = document.getElementById("cartProducts");
+let total = document.getElementById("total");
+let countOfItems = document.getElementById("countOfItems");
 
+let cartOpen = false;
+
+let cartProIdList = [];
+homeBtn.onclick = function() {
+    con.classList.add("display-containers");
+    main.classList.remove("display-containers");
+    cartOpen = false;
+}
+
+cart.onclick = function() {
+    productsListElement2.textContent = '';
+    con.classList.remove("display-containers");
+    main.classList.add("display-containers");
+    cartOpen = true;
+    doNetworkCall();
+}
 let url = ' https://cdn.shopify.com/s/files/1/0564/3685/0790/files/multiProduct.json';
 let options = {
     methon: "GET"
 };
+
+let tab = "Men";
 const productCard = function(item) {
     let {
         badge_text,
@@ -16,6 +41,7 @@ const productCard = function(item) {
         image,
         price,
         title,
+        id,
         vendor
     } = item;
 
@@ -72,33 +98,56 @@ const productCard = function(item) {
     let cartButtonEl = document.createElement("button");
     cartButtonEl.textContent = "Add to Cart";
     cartButtonEl.classList.add("cart-button");
-    listItem.appendChild(cartButtonEl);
-
-
-
-    productsListElement.appendChild(listItem);
+    cartButtonEl.setAttribute("id", id);
+    cartButtonEl.addEventListener('click', function(Event) {
+        let initCount = count.textContent;
+        count.textContent = Number(initCount) + 1;
+        cartProIdList.push(id);
+    });
+    if (cartOpen) {
+        productsListElement2.appendChild(listItem);
+        total.textContent = Number(total.textContent) + Number(price);
+    } else {
+        listItem.appendChild(cartButtonEl);
+        productsListElement.appendChild(listItem);
+    }
+}
+const getCartProducts = function(data) {
+    for (let i of data) {
+        for (let j of i.category_products) {
+            if (cartProIdList.includes(j.id)) {
+                productCard(j);
+            }
+        }
+    }
 }
 const getProduct = function(data) {
     for (let item of data) {
         productCard(item);
     }
-}
+};
 const doNetworkCall = async () => {
     const response = await fetch(url, options);
     const jsonData = await response.json();
     const data = jsonData.categories;
     if (response.status === 200) {
-        switch (tab) {
-            case "Men":
-                getProduct(data[0].category_products);
-                break;
-            case "Women":
-                getProduct(data[1].category_products);
-                break;
-            case "Kids":
-                getProduct(data[2].category_products);
-                break;
+
+        if (cartOpen) {
+            getCartProducts(data)
+        } else {
+            switch (tab) {
+                case "Men":
+                    getProduct(data[0].category_products);
+                    break;
+                case "Women":
+                    getProduct(data[1].category_products);
+                    break;
+                case "Kids":
+                    getProduct(data[2].category_products);
+                    break;
+            }
         }
+
     } else {
         productsListElement.textContent = `SOMETHING WENT WRONG!`;
     }
