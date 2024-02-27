@@ -4,16 +4,32 @@
 <head> </head>
 
 <body>
-    <div class="bg-container">
-        <h1 class="heading">SELECT YOUR CHOICE</h1>
-        <div class="button-container">
-            <button id="men" class="button">Men</button>
-            <button id="women" class="button">Women</button>
-            <button id="kids" class="button">Kids</button>
+    <div id="main" class="bg-container">
+        <button id="cart" class="cart">
+            cart
+            <p id="count" class="count">0</p>
+        </button>
+        <div class="bg-container">
+            <h1 class="heading">SELECT YOUR CHOICE</h1>
+            <div class="button-container">
+                <button id="men" class="button">Men</button>
+                <button id="women" class="button">Women</button>
+                <button id="kids" class="button">Kids</button>
+            </div>
+            <ul id="productsList" class="products-container">
+
+            </ul>
         </div>
-        <ul id="productsList" class="products-container">
+    </div>
+    <div id="con" class="display-containers cart-container">
+        <button id="homeBtn" class="home">Home</button>
+        <ul id="productsList2" class="products-container">
 
         </ul>
+        <div class="checkout-container">
+            <p class="total-count">Total: <span id="total">0</span></p>
+            <button class="home">Checkout</button>
+        </div>
     </div>
 </body>
 
